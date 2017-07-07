@@ -3,19 +3,23 @@ import Queue
 import threading
 import logging
 
-#use mitmproxy
+# Use mitmproxy to observe or monitor. 
+# Enter mitmproxy's interactive mode:
+#   mitmproxy -i ~q 
 local_proxies = {
   "http": "http://localhost:8080",
   "https": "https://localhost:8080",
 }
 
-#get from https://free-proxy-list.net/
-#TODO: replace with a dynamic list.
+# A proxy list example: https://free-proxy-list.net/
+# TODO: replace with a dynamic list.
 outside_proxies = {
   "http": "http://200.141.34.246:53281",
   "https": "https://200.141.34.246:53281",
 }
 
+# Logger setup method.
+# The logs will be displayed and stored in file whois.log
 def setLogger():
     logger = logging.getLogger('WhoisLogger')
     hdlr = logging.FileHandler('./whois.log')
@@ -28,7 +32,8 @@ def setLogger():
     logger.setLevel(logging.DEBUG)
     return logger
 
-
+# Multithreads programming.
+# This class is a worker thread that will be started by main thread.
 class WhoisWorker(threading.Thread):
     def __init__(self, queue, logger):
         threading.Thread.__init__(self)
@@ -56,17 +61,27 @@ class WhoisWorker(threading.Thread):
                 self.logger.debug(texts)
             except Exception as e:
                 self.logger.error("failed to load %s because of %s." %(url, str(e)))
+            # Send signal to the queue that the worker thread
+            #  has finished one task.
             self.queue.task_done()
 
+# The entrance of the program.
 def main():
     logger = setLogger()
     queue = Queue.Queue()
     
-    #Note that mxtoolbox.com requires JS execution. 
-    # use phantomjs instead.
-    #urls = ["https://mxtoolbox.com/SuperTool.aspx?action=whois%3agoogle.com&run=toolpage"]
+    # Example: mxtoolbox.com requires JS execution. 
+    #  use phantomjs instead.
+    #  url: ["https://mxtoolbox.com/SuperTool.aspx?action=whois%3agoogle.com&run=toolpage"]
     
-    urls = ["https://who.is/whois/sina.com.cn", "https://www.whatismyip.com/"]
+    # Example: www.whatismyip.com checks the user-agent.
+    #  provide headers in each request.
+    #  url: https://www.whatismyip.com/
+    
+    # Example: whois.icann.org requires captcha.
+    #  url: https://whois.icann.org/en/lookup?name=google.com
+
+    urls = ["https://who.is/whois/sina.com.cn", ]
     #urls = ["https://www.iplocation.net/find-ip-address"]
     # start worker threads
     for i in range(5):
@@ -77,7 +92,7 @@ def main():
     for url in urls:
         queue.put(url)
     
-    #wait on the queue until all have been processed
+    # Wait on the queue until all have been processed
     queue.join()
 
 if __name__ == "__main__":
