@@ -1,13 +1,15 @@
 import scrapy
-
+#usage:  
+#  scrapy crawl links -a seed_fname=./mozilla-top500-url.txt -o result.json
 class LinkSpider(scrapy.Spider):
     name = 'links'
-    def __init__(self):
+    def __init__(self, seed_fname, *args, **kwargs):
         self.filterSet = set()
         # TODO: what if the size of collectedSet is too large
         #       to be stored in the memory?
         self.collectedSet = set()
-        self.threshold = 5000
+        self.threshold = 500000
+        self.filename = seed_fname
 
     # this method must return an iterable of Requests,
     # either a list or a generator function.
@@ -15,10 +17,10 @@ class LinkSpider(scrapy.Spider):
         # TODO: change the hard-coded urls to be a list of
         #       URLs whose file name is given by the program's 
         #       parameter. 
-        urls = [
-            'http://www.cnn.com',
-            'http://quotes.toscrape.com/page/2/',
-        ]
+        urls = []
+        with open(self.filename) as f:
+            for line in f:
+                urls.append(line.strip())
         for url in urls:
             yield scrapy.Request(url=url, callback=self.parse,
                 headers=self.create_header())
