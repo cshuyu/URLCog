@@ -40,25 +40,23 @@ def create_info_dic(path):
 def create_index_dic(path):
     with codecs.open(path,encoding='utf-8') as f:
         arr=f.read().split('\n')
-        del(arr[-1])
     index_dic={}
     for line in arr:
         line_arr=line.split(':')
         url=line_arr[0]
         indexes_arr=line_arr[1].split(',')
         for ind in indexes_arr:
-            index_dic[int(ind)]=url
+            index_dic[ind]=url
     return index_dic
 
 def process(lexical_path,save_path,info_dic,index_dic):
     with codecs.open(lexical_path,encoding='utf-8') as f:
         arr=f.read().split('\n')
+        del(arr[0])
     result='num_ip,reg_time,country,registrar,tld,dot_num,avg_host,max_host,avg_path,max_path,class\n'
     for i,line in enumerate(arr):
-        if i==0:
-            continue
         try:
-            url = index_dic[i]
+            url = index_dic[str(i)]
             info=info_dic[url]
             info=info.replace('\r','')
             result+=info+','+line+'\n'

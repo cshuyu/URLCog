@@ -20,8 +20,8 @@ for line in arr:
     dot_num, avg_host, max_host, avg_path, max_path=l.lexical(hostname,path)
     result_arr1.append(tld+','+str(dot_num)+','+str(avg_host)+','+str(max_host)+','+str(avg_path)+','+str(max_path)+',good')
 
-result='tld,dot_num,avg_host,max_host,avg_path,max_path,class'
-result='\n'.join(result_arr1)
+result='tld,dot_num,avg_host,max_host,avg_path,max_path,class\n'
+result+='\n'.join(result_arr1)
 with codecs.open('lexical_good.csv',mode='w',encoding='utf-8') as f:
     f.write(result)
 
@@ -39,14 +39,7 @@ for line in arr:
     dot_num, avg_host, max_host, avg_path, max_path=l.lexical(hostname,path)
     result_arr2.append(tld+','+str(dot_num)+','+str(avg_host)+','+str(max_host)+','+str(avg_path)+','+str(max_path)+',bad')
 
-result='tld,dot_num,avg_host,max_host,avg_path,max_path,class'
-result='\n'.join(result_arr2)
+result='tld,dot_num,avg_host,max_host,avg_path,max_path,class\n'
+result+='\n'.join(result_arr2)
 with codecs.open('lexical_bad.csv',mode='w',encoding='utf-8') as f:
-    f.write(result)
-
-result_arr=result_arr1+result_arr2
-shuffle(result_arr)
-result='tld,dot_num,avg_host,max_host,avg_path,max_path,class'
-result+='\n'.join(result_arr)
-with codecs.open('lexical_training.csv',mode='w',encoding='utf-8') as f:
     f.write(result)

@@ -1,3 +1,4 @@
+tld,dot_num,avg_host,max_host,avg_path,max_path,class
 com,1,4.0,5,0.0,0,good
 com,1,4.0,5,8.5,13,good
 com,1,4.0,5,9.333333333333334,13,good
