@@ -1,0 +1,12 @@
+Usage:
+    python phantom_manager.py logs/ phantom_worker.js
+
+TODO:
+    phantom_manager.py: proxy list
+    phantom_manager.py: user agent list
+    phantom_worker.js : parse web contents to extract contents.
+
+Note:
+    kill phantom_manager.py
+    Linux: ps aux | grep "phantom_manager"| grep -v "grep" 
+        
