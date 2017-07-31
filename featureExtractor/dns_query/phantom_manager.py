@@ -17,6 +17,9 @@ def getRandomHTTPSProxy():
     #TODO: the candiadte list should be larger than 300
     return "104.236.166.203:3128"
 
+def getRandomUserAgent():
+    return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:38.0) Gecko/20100101 Firefox/38.0"
+
 ''' Web retrieval task class '''
 class Task:
     def __init__(self, url, time, proxy=None):
@@ -54,9 +57,10 @@ class Manager(threading.Thread):
             # note that phantomjs should be in your classpath.
             proxy_url = "--proxy="+getRandomHTTPSProxy()
             proxy_type = "--proxy-type=http"
+            user_agent = getRandomUserAgent()
             args = ['phantomjs']
             args[1:1] = [proxy_url, proxy_type, self.__worker_script_path, \
-                task.url, str(task.times)]
+                task.url, str(task.times), "5000", user_agent]
             logger.info("Start worker for "+task.url+ " with proxy "+proxy_url)        
     
             # start worker process 
