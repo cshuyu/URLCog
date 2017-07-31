@@ -1,0 +1,55 @@
+=== Run information ===
+
+Scheme:       weka.classifiers.functions.Logistic -R 1.0E-8 -M -1 -num-decimal-places 4
+Relation:     host+lexical+whitelist_training-weka.filters.unsupervised.attribute.Remove-R2-7-weka.filters.unsupervised.attribute.Remove-R2-5
+Instances:    159658
+Attributes:   2
+              is_top_1m
+              class
+Test mode:    10-fold cross-validation
+
+=== Classifier model (full training set) ===
+
+Logistic Regression with ridge parameter of 1.0E-8
+Coefficients...
+              Class
+Variable       good
+===================
+is_top_1m    3.9247
+Intercept   -1.1058
+
+
+Odds Ratios...
+              Class
+Variable       good
+===================
+is_top_1m     50.64
+
+
+Time taken to build model: 1.91 seconds
+
+=== Stratified cross-validation ===
+=== Summary ===
+
+Correctly Classified Instances      136385               85.4232 %
+Incorrectly Classified Instances     23273               14.5768 %
+Kappa statistic                          0.7035
+Mean absolute error                      0.2306
+Root mean squared error                  0.3396
+Relative absolute error                 48.967  %
+Root relative squared error             69.9769 %
+Total Number of Instances           159658     
+
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 0.814    0.079    0.944      0.814    0.874      0.714    0.866     0.903     good
+                 0.921    0.186    0.751      0.921    0.827      0.714    0.866     0.729     bad
+Weighted Avg.    0.854    0.120    0.871      0.854    0.856      0.714    0.866     0.837     
+
+=== Confusion Matrix ===
+
+     a     b   <-- classified as
+ 80591 18464 |     a = good
+  4809 55794 |     b = bad
+
