@@ -83,6 +83,7 @@ taskWorker = (function (){
           ", failed objects:"+ result.failed_obj_count);
         remaining_times = 0;
         //console.log(result.content);
+        //Parse contents
         send_contents(current_url, result.content)
       }
     }
@@ -203,9 +204,7 @@ taskWorker = (function (){
       page.open(url, function (status) {
         console.log("[INFO] done opening: "+url+" "+status);
         content = page.content.slice(0);
-        if (status === "success"){
-          landing_page = page.url.slice(0);
-        }    
+           
         page.close();
         page = null;
         
@@ -274,7 +273,7 @@ else {
     userAgent = system.args[4];
   }
   else {
-    userAgent = defaultTimeout;
+    userAgent = defaultUserAgent;
   }
   console.log("[MAIN] browsing "+address+" for "+times);
   taskWorker.configure({

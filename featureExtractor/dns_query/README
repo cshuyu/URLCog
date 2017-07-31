@@ -8,5 +8,5 @@ TODO:
 
 Note:
     kill phantom_manager.py
-    Linux: ps aux | grep "phantom_manager"| grep -v "grep" 
+    Linux: ps aux | grep "phantom_manager" | grep -v "grep" | awk '{print $2}'|xargs kill -9
         

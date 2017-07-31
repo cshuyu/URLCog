@@ -17,7 +17,7 @@ def killProcR(parent_pid, log_name="ProcMgr"):
         p = psutil.Process(parent_pid)
         child_pid = p.get_children(recursive=True)
         for pid in child_pid:
-            killProc(pid.pid)
+            killProcR(pid.pid)
         killProc(parent_pid)
     except Exception as e:
         logger.error("killProcR exception %s" % str(e))
