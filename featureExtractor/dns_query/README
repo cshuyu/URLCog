@@ -1,5 +1,7 @@
 Usage:
     python phantom_manager.py logs/ phantom_worker.js
+    phantomjs phantom_worker.js https://www.whatsmydns.net/#A/www.google.com 1 10000 timeout "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:38.0) Gecko/20100101 Firefox/38.0"
+
 
 TODO:
     phantom_manager.py: proxy list
