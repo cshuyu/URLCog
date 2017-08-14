@@ -11,7 +11,7 @@ var queue = require('./Queue'),
 /* Settings */
 defaultUserAgent = 
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:38.0) Gecko/20100101 Firefox/38.0";
-defaultTimeout = 5000;
+defaultTimeout = 10000;
 
 /* Utilities */
 b64EncodeUnicode = function(str) {
@@ -19,6 +19,7 @@ b64EncodeUnicode = function(str) {
         return String.fromCharCode('0x' + p1);
     }));
 }
+/*
 displayObject = function (obj) {
   var item;
   for (item in obj) {
@@ -27,7 +28,7 @@ displayObject = function (obj) {
     }
   }
 };
-
+*/
 /* Task Worker */
 /*
  * taskWorker = {
@@ -50,8 +51,8 @@ taskWorker = (function (){
     configure, post_task, start_tasks, 
     open_url, open_url_callback,
     get_remaining_task_count, get_fin_task_count, get_error_tag;
-
-  configure = function(settings) {
+  
+   configure = function(settings) {
     user_agent = settings.user_agent;
     timeout = settings.timeout;
     remaining_times = settings.remaining_times;
@@ -60,7 +61,7 @@ taskWorker = (function (){
   post_task = function (task) {
     task_queue.enqueue(task);
     console.log("[ADD_TASK] adding a browsing task: " + 
-      task_queue.getLength());
+    task_queue.getLength());
   };
 
   open_url_callback = function (result) {
@@ -73,7 +74,7 @@ taskWorker = (function (){
           return ;
         }
         else{
-          console.log('[INFO]  Give up this URL.');
+            console.log('[INFO]  Give up this URL.');
         }
       }
       else {
@@ -84,20 +85,19 @@ taskWorker = (function (){
         remaining_times = 0;
         //console.log(result.content);
         //Parse contents
-        send_contents(current_url, result.content)
+        send_contents(current_url, result.content);
       }
     }
     catch (err) {
-      console.log("[ERROR] error in open_url_callback "+err);
+        console.log("[ERROR] error in open_url_callback "+err);
     }
-    
     start_tasks();
   };
 
   send_contents = function (url, contents) {
     //TODO: this method will send results to database to store.
     //      right now, let's just write it to standard output.
-    console.log("[RESULT]\n"+contents);
+    console.log("\n"+"::::"+contents+"::::");
     return ;
 
     var db_listener = "http://localhost:4040/api/web-contents/contents-store",
@@ -175,7 +175,7 @@ taskWorker = (function (){
       return ;
     }
     page = require('webpage').create();
-    page.settings.resourceTimeout = 5000;
+    page.settings.resourceTimeout = 10000;
     page.settings.userAgent = user_agent;    
 
     page.onConsoleMessage = function (msg) { console.log(msg); };
@@ -230,15 +230,15 @@ taskWorker = (function (){
   wait_for_task_finish = function() {
     if (!taskWorker.get_error_tag() &&
       (task_queue.getLength()>0 || page!==null) ) {
-        console.log("[INFO] finished "+task_queue.getLength() +
-          " tasks left, check 2s later");
+  //      console.log("[INFO] finished "+task_queue.getLength() +
+  //        " tasks left, check 2s later");
       setTimeout(
         function(){ wait_for_task_finish() },
         2000);
     }
     else {
       console.log("[INFO] exit. finished "+
-        taskWorker.get_fin_task_count()+" tasks");
+       taskWorker.get_fin_task_count()+" tasks");
       phantom.exit();
     }
   };

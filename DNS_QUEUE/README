@@ -1,0 +1,19 @@
+Usage:
+    python phantom_manager.py logs/ phantom_worker.js
+
+    phantomjs phantom_worker.js https://www.whatsmydns.net/#A/google.com 1 10000 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:38.0) Gecko/20100101 Firefox/38.0"
+
+
+    phantomjs —-proxy="203.204.203.146:443" —-proxy-type="http" phantom_worker.js https://www.whatsmydns.net/#A/google.com 1 10000 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:38.0) Gecko/20100101 Firefox/38.0"
+
+
+
+TODO:
+    phantom_manager.py: proxy list
+    phantom_manager.py: user agent list
+    phantom_worker.js : parse web contents to extract contents.
+
+Note:
+    kill phantom_manager.py
+    Linux: ps aux | grep "phantom_manager" | grep -v "grep" | awk '{print $2}'|xargs kill -9
+        
