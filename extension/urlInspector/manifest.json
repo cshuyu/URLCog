@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+
+  "name": "URL Inspector",
+  "description": "Detect and block malicious/phishing URLs",
+  "version": "1.0",
+
+  "browser_action": {
+    "default_icon": "assets/icon.png",
+    "default_popup": "html/popup.html",
+    "default_title": "URL Inspector"
+  },
+
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*","https://*/*"],
+      "css": ["css/content_style.css"],
+      "js": ["js/jquery2.js", "js/content_script.js"]
+    }
+  ]
+}
