@@ -261,8 +261,8 @@ if (system.args.length < 3) {
     "usage: phantom-worker.js url times timeout-for-one-req userAgent");
 }
 else {
-  address = system.args[1];
-  times = parseInt(system.args[2]);
+  address = system.args[0];
+  times = parseInt(system.args[1]);
   if (system.args.length >3 ){
     timeout = parseInt(system.args[3]);
   }
