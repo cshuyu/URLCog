@@ -10,3 +10,15 @@ instagram.com:IE,32934,0
 wordpress.org:CA,13768,0
 wordpress.net:CA,13768,0
 wordcamp.org:CA,13768,0
+adobe.com:US,1313,0
+behance.net:US,54113,0
+99u.com:US,2635,1
+cmo.com:US,14618,1
+adobe.io:US,14618,1
+facebook.com:IE,32934,0
+twitter.com:IE,32934,0
+linkedin.com:US,14413,1
+instagram.com:IE,32934,0
+wordpress.org:CA,13768,0
+wordpress.net:CA,13768,0
+wordcamp.org:CA,13768,0

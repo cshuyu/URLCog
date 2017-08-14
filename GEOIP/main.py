@@ -18,6 +18,8 @@ def get_info(domain):
     return country,asn,ptr
 
 arr = import_domain('good_domain.txt')
+arr += import_domain('bad_domain.txt')
+
 for i,domain in enumerate(arr):
     try:
         country,asn,ptr = get_info(domain)
