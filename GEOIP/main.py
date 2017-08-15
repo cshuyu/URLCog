@@ -1,35 +1,59 @@
-import codecs
-import socket
-import geoip
-import time
+# see https://github.com/cshuyu/URLCog/ contributer Xiang Pan, cshuyu
+import WhoisWorker as wh
+import queue as qu
+import helper
+import warnings
+warnings.filterwarnings("ignore")
 
-def import_domain(path,lo=None,hi=None):
-    with codecs.open(path,encoding='utf-8') as f:
-        arr = f.read().split('\n')
-    for i in range(len(arr)):
-        arr[i] = arr[i].split(':')[0]
-    return arr[lo:hi]
+# Use mitmproxy to observe or monitor.
+# Enter mitmproxy's interactive mode:
+#   mitmproxy -i ~q 
+single_proxy = {
+  "http": "http://46.36.65.10:3128",
+  "https": "https://46.36.65.10:3128"
+}
+# Example: mxtoolbox.com requires JS execution.
+#  use phantomjs instead.
+#  url: ["https://mxtoolbox.com/SuperTool.aspx?action=whois%3agoogle.com&run=toolpage"]
 
-def get_info(domain):
-    ip = socket.gethostbyname(domain)
-    country = geoip.get_country(ip)
-    asn = geoip.get_asn(ip)
-    ptr = geoip.ptr(ip)
-    return country,asn,ptr
+# Example: www.whatismyip.com checks the user-agent.
+#  provide headers in each request.
+#  url: https://www.whatismyip.com/
 
-arr = import_domain('good_domain.txt')
-arr += import_domain('bad_domain.txt')
+# Example: whois.icann.org requires captcha.
+#  url: https://whois.icann.org/en/lookup?name=google.com
 
-for i,domain in enumerate(arr):
-    try:
-        country,asn,ptr = get_info(domain)
-        result = domain + ':' + country + ',' + str(asn) + ',' + str(ptr) + '\n'
-    except Exception as e:
-        print(str(e))
-        result = domain + ':\n'
-    print(result[:-1])
-    with codecs.open('result.txt','a',encoding='utf-8') as f:
-        f.write(result)
-    if i%100==99:
-        time.sleep(10)
-    time.sleep(0.1)
+# The entrance of the program.
+
+def main():
+    thread_num = 10
+    queue = qu.Queue()
+    console_logger, result_logger = helper.setLogger('good.log')
+
+    urls = helper.import_url('good_domain.txt',None,None)
+    proxys = helper.import_proxy('proxy.csv','comma')
+    console_logger.debug(proxys[0])
+    #proxys=None
+    
+    #result_logger.debug(u'num,url:num_ip,reg_time,country,registrar')
+    # start worker threads
+    for i in range(thread_num):
+        proxy_arr=[]
+        if proxys:
+            proxy_arr = proxys[int(i*len(proxys)/thread_num):int((i+1)*len(proxys)/thread_num)]
+        conn_timeout=7
+        read_timeout=10
+        max_attempt=5
+        worker = wh.WhoisWorker(i, queue, proxy_arr,console_logger, result_logger,conn_timeout,read_timeout,max_attempt)
+        worker.setDaemon(True)
+        worker.start()
+    
+    for i,url in urls:
+        queue.put((i,url))
+    
+    # Wait on the queue until all have been processed
+
+    queue.join()
+
+if __name__ == "__main__":
+    main()
