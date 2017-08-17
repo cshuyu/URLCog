@@ -1,7 +1,7 @@
 import requests
 import threading
 import WhoisParser as parser
-import geoip
+import geoip,time,random
 
 # Multithreads programming.
 # This class is a worker thread that will be started by main thread.
@@ -28,9 +28,12 @@ class WhoisWorker(threading.Thread):
             proxy=None
             if self.proxy_arr:
                 proxy=self.proxy_arr[proxy_index]
-            response = requests.get(self.whois_site + url, verify=False, headers=self.headers,
+            full_url = self.whois_site + url
+            print("DEBUG: "+full_url+", "+str(proxy))
+            response = requests.get(full_url, verify=False, headers=self.headers,
                                     timeout=(self.conn_timeout, self.read_timeout),
                                     proxies=proxy)
+            time.sleep(2)
             if response.status_code >= 400:
                 self.console_logger.error('   Get bad request %s' % i)
                 return False
@@ -45,17 +48,22 @@ class WhoisWorker(threading.Thread):
         except Exception as e:
             self.console_logger.error('      Error loading %s, thread %d, proxy index %d' % (i, self.thread_id, proxy_index))
             self.console_logger.error('         %s'%str(e))
+            time.sleep(2)
             return False
 
     def run(self):
-        proxy_index = 0
+        if self.proxy_arr:
+            proxy_len = len(self.proxy_arr)
+        else:
+            proxy_len = 0
+        proxy_index = random.randint(0,proxy_len-1)
         while True:
             i,url = self.queue.get()
             attempt = 0
             #self.logger.debug("start " + url)
             while not self.step(i, url, proxy_index):
                 if self.proxy_arr:
-                    proxy_index=(proxy_index+1) % len(self.proxy_arr)
+                    proxy_index = random.randint(0,proxy_len-1)
                 if attempt>=self.max_attempt:
                     # put the task into the queue again
                     #self.queue.put((i, url))

@@ -26,12 +26,13 @@ single_proxy = {
 # The entrance of the program.
 
 def main():
-    thread_num = 10
+    thread_num = 5
     queue = qu.Queue()
-    console_logger, result_logger = helper.setLogger('good.log')
+    console_logger, result_logger = helper.setLogger('bad.log')
 
-    urls = helper.import_url('good_domain.txt',None,None)
-    proxys = helper.import_proxy('proxy.csv','comma')
+    urls = helper.import_url('bad_domain.txt',None,None)
+    #proxys = helper.import_proxy('proxy.csv','comma')
+    proxys = helper.import_proxy('proxy.csv','')
     console_logger.debug(proxys[0])
     #proxys=None
     
@@ -41,9 +42,13 @@ def main():
         proxy_arr=[]
         if proxys:
             proxy_arr = proxys[int(i*len(proxys)/thread_num):int((i+1)*len(proxys)/thread_num)]
+            #for p in proxys:
+            #    print(str(p))
+            #sys.exit(1)
         conn_timeout=7
         read_timeout=10
-        max_attempt=5
+        max_attempt=2
+        #print(proxy_arr)
         worker = wh.WhoisWorker(i, queue, proxy_arr,console_logger, result_logger,conn_timeout,read_timeout,max_attempt)
         worker.setDaemon(True)
         worker.start()
