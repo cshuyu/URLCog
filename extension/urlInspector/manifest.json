@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "URL Inspector",
-  "description": "Detect and block malicious/phishing URLs",
+  "description": "Detect and block malicious/phishing URLs. See Readme for details.",
   "version": "1.0",
 
   "browser_action": {
@@ -20,7 +20,16 @@
     {
       "matches": ["http://*/*","https://*/*"],
       "css": ["css/content_style.css"],
-      "js": ["js/jquery2.js", "js/content_script.js"]
+      "js": ["js/jquery2.js",                // Jquery
+             "js/machine_learning.min.js",   // ML Library
+             "js/URI.min.js",   // ML Library
+             "js/complex_suffix_list.js",             
+             "js/bloomfilter.js",
+             "js/alexa_bloom_filter.js",
+             "js/url_util.js",
+             "js/dtmodel.js",
+             "js/classifier_client.js",
+             "js/content_script.js"]
     }
   ]
 }

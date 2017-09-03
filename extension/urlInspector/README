@@ -1,0 +1,20 @@
+This is a prototype implementation.
+
+How to train a model.
+//TODO: a bash script is required.
+
+1. Create data set in the following format, and 
+  save it as training_set.txt file:
+  # url, [B|M]
+  See assets/training_set_example.txt as example.
+
+2. Convert training set as JavaScript file, and
+  move it to js folder.
+  # cd assets
+  # python processTrainingSet.py training_set.txt
+  # mv aining_set.js ../js/
+  
+3. Build Decision Tree model and save it to dtmodel.js.
+  # node classifier_train.js
+
+Now you are ready to go.
