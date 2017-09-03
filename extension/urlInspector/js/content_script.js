@@ -3,7 +3,7 @@
 // Global variable.
 var clickableLinks = new Object();
 var LOW_CONFIDENCE_SCORE_THRESHOLD = 20;
-
+var observer = null;
 // Listen commands from background JS.
 chrome.runtime.onMessage.addListener(
   // scan all available urls
@@ -13,6 +13,10 @@ chrome.runtime.onMessage.addListener(
       //console.log("URLCog: found "+rs.length+" nodes.");
       //TODO: monitor DOM tree to monitor the rest.
       registerDOMMonitor();
+    } else if (request.cmd === "disable_inspector") {
+      if(observer) {
+        observer.disconnect();
+      }
     }
   }
 );
@@ -32,12 +36,16 @@ var scanAndDetectAllClickableLinks = function() {
     var node = links[idx];
     if(! node.href) continue;
     //TODO: filter out those scanned URLs using BloomFilter?
-    var url = getFullURL(node.href);
-    if(url && detectURL(url)) {
-      node.style.color = 'red';
-    }
+    processNode(node);
   }
   console.log("done detecting "+links.length+" urls.");
+}
+
+var processNode = function(node) {
+  var url = getFullURL(node.href);
+  if(url && detectURL(url)) {
+    node.style.color = 'red';
+  }
 }
 
 var getFullURL = function(url){
@@ -78,6 +86,26 @@ var detectURL = function(url){
 /**
  * Register DOM tree change to detect newly added urls.
  */
-var registerDOMMonitor = function() {
-  //TODO:
+var registerDOMMonitor = function() { 
+  observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      // console.log("mutation nodeName:", mutation.target.nodeName);
+      // console.log("mutation addedNodes:", mutation.addedNodes);
+      // console.log("mutation :", mutation);
+      for (var i=0; i<mutation.addedNodes.length; i++) {
+        var node = mutation.addedNodes[i];
+        // console.log("AddedNode: ",node);
+        // console.log("Href: ",node.href);
+        if(node.href) {
+          processNode(node);
+        }
+      }
+    });
+  });
+  observer.observe(document, { childList:true, subtree: true, attributes:true });
+
+  var a = document.createElement("a");
+  a.href = "http://www.google.com";
+  a.innerText ="abd";
+  document.getElementsByTagName('body')[0].appendChild(a);
 }
