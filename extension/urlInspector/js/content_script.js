@@ -2,20 +2,32 @@
 
 // Global variable.
 var clickableLinks = new Object();
-var LOW_CONFIDENCE_SCORE_THRESHOLD = 20;
+var LOW_CONFIDENCE_SCORE_THRESHOLD = 120;
 var observer = null;
+var idCnt = 0;
+var idNodeMap = {};
 // Listen commands from background JS.
 chrome.runtime.onMessage.addListener(
   // scan all available urls
   function(request, sender, sendResponse) {
     if( request.cmd === "enable_inspector" ) {
       scanAndDetectAllClickableLinks();
-      //console.log("URLCog: found "+rs.length+" nodes.");
-      //TODO: monitor DOM tree to monitor the rest.
       registerDOMMonitor();
     } else if (request.cmd === "disable_inspector") {
       if(observer) {
         observer.disconnect();
+      }
+    } else if (request.cmd === "detection_result") {
+      try{
+        var node = idNodeMap[request.id];
+        //console.log("received detection_result:", request, node);
+        if(node) {
+          if(request.result === "M") {
+            node.style.color = 'red';
+          }
+        }
+      } catch (e) {
+        console.log("error: receive detection request: ",e);
       }
     }
   }
@@ -43,7 +55,7 @@ var scanAndDetectAllClickableLinks = function() {
 
 var processNode = function(node) {
   var url = getFullURL(node.href);
-  if(url && detectURL(url)) {
+  if(url && detectNode(node)) {
     node.style.color = 'red';
   }
 }
@@ -65,15 +77,19 @@ var getFullURL = function(url){
 }
 
 /**
- * Scan the target url.
+ * Scan the target node with href attribute.
  *
- * @param {string} url - the target url to be inspected.
+ * @param {Node} node - the target node to be inspected.
  */
-var detectURL = function(url){
+var detectNode = function(node){
+  var url = node.href
   var rs = dtModel.classify(url);
   //console.log("detect result: ",rs,url);
   if (rs.score<LOW_CONFIDENCE_SCORE_THRESHOLD) {
     //TODO: Ajax sends to backend server for processing.
+    var id = genUniqueID();
+    idNodeMap[id] = node;
+    requestRemoteDetection({url:url, id:id});
   }
 
   if(!rs.isMalicious || rs.score<LOW_CONFIDENCE_SCORE_THRESHOLD) {
@@ -104,8 +120,30 @@ var registerDOMMonitor = function() {
   });
   observer.observe(document, { childList:true, subtree: true, attributes:true });
 
-  var a = document.createElement("a");
-  a.href = "http://www.google.com";
-  a.innerText ="abd";
-  document.getElementsByTagName('body')[0].appendChild(a);
-}
+  // var a = document.createElement("a");
+  // a.href = "http://www.google.com";
+  // a.innerText ="abd";
+  // document.getElementsByTagName('body')[0].appendChild(a);
+};
+/*
+ * Sends the url to backend, where it will sends to server for
+ * deeper detection.
+ * Param (object) {url: url, id:id}
+ */
+var requestRemoteDetection = function(obj){
+  chrome.runtime.sendMessage({
+      cmd:"deep-detection", 
+      url: obj.url, 
+      id:obj.id}, 
+    function(response){
+      if(response && response.status) {
+        //console.log("["+response.status+"] done sending "+obj.url+" for remote detection.");
+      } else {
+        console.log("request emoteDetection failed. ");
+      }
+    });
+};
+
+var genUniqueID = function(){
+  return idCnt++;
+};
